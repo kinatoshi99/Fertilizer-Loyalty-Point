@@ -25,6 +25,7 @@ export const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer,
         <input
           type="text"
           id="name"
+          data-testid="name-input"
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="mt-1 block w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-pastel-mint/50 focus:border-pastel-mint"

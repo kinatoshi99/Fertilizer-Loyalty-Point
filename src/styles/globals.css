@@ -1,0 +1,26 @@
+:root {
+  --form-fg: #000000;
+  --placeholder-fg: #6B7280;
+}
+input, textarea, select {
+  color: var(--form-fg);
+  caret-color: var(--form-fg);
+  -webkit-text-size-adjust: 100%;
+}
+input::placeholder, textarea::placeholder {
+  color: var(--placeholder-fg);
+  opacity: 1;
+}
+input:focus, textarea:focus, select:focus {
+  color: var(--form-fg);
+  outline: none;
+}
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: var(--form-fg) !important;
+  transition: background-color 9999s ease-in-out 0s;
+  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+  box-shadow: 0 0 0px 1000px #ffffff inset !important;
+}
+label { font-weight: 500; }
