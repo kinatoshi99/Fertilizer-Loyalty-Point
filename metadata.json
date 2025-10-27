@@ -1,0 +1,5 @@
+{
+  "name": "Fertilizer Points System",
+  "description": "An admin dashboard to manage a customer loyalty rewards system for a fertilizer company. It allows tracking customers, awarding points for purchases, managing rewards, and identifying inactive customers.",
+  "requestFramePermissions": []
+}
