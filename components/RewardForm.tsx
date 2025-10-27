@@ -44,7 +44,7 @@ export const RewardForm: React.FC<RewardFormProps> = ({ onSubmit, onClose, initi
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 font-inter">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label htmlFor="reward-name" className="block text-sm font-medium text-slate-600 dark:text-slate-300">Reward Name</label>
         <input
@@ -52,7 +52,7 @@ export const RewardForm: React.FC<RewardFormProps> = ({ onSubmit, onClose, initi
           id="reward-name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-pale-lavender/50"
+          className="mt-1 block w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50"
           required
         />
       </div>
@@ -63,7 +63,7 @@ export const RewardForm: React.FC<RewardFormProps> = ({ onSubmit, onClose, initi
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
-          className="mt-1 block w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-pale-lavender/50"
+          className="mt-1 block w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50"
           required
         />
       </div>
@@ -76,7 +76,7 @@ export const RewardForm: React.FC<RewardFormProps> = ({ onSubmit, onClose, initi
             value={pointsCost}
             onChange={(e) => setPointsCost(e.target.value)}
             min="0"
-            className="mt-1 block w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-pale-lavender/50"
+            className="mt-1 block w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50"
             required
           />
         </div>
@@ -88,14 +88,14 @@ export const RewardForm: React.FC<RewardFormProps> = ({ onSubmit, onClose, initi
             value={inventory}
             onChange={(e) => setInventory(e.target.value)}
             min="0"
-            className="mt-1 block w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-pale-lavender/50"
+            className="mt-1 block w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50"
             required
           />
         </div>
       </div>
       <div className="flex justify-end space-x-3 pt-2">
         <button type="button" onClick={onClose} className="px-4 py-2 bg-slate-200 text-charcoal rounded-xl hover:bg-slate-300 dark:bg-slate-600 dark:text-slate-200 dark:hover:bg-slate-500 transition font-medium">Cancel</button>
-        <button type="submit" className="px-4 py-2 bg-pale-lavender text-white rounded-xl hover:opacity-90 transition font-medium">Save Reward</button>
+        <button type="submit" className="px-4 py-2 bg-purple-500 text-white rounded-xl hover:opacity-90 transition font-medium">Save Reward</button>
       </div>
     </form>
   );
