@@ -8,9 +8,11 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@playwright/test": "^1.56.1",
     "@react-google-maps/api": "^2.19.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
