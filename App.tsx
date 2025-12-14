@@ -21,6 +21,7 @@ interface Customer {
   address?: string
   crops?: string[]
   rai?: number
+  referralCode?: string
 }
 
 interface Reward {
@@ -163,27 +164,64 @@ function Tag({ label, selected, onToggle }: { label: string; selected: boolean; 
 // ----------------------
 // Create Customer Form
 // ----------------------
-function CreateCustomerForm({ onSubmit, onCancel }: { onSubmit: (payload: { name: string; address: string; phone: string; crops: string[]; rai: number }) => void; onCancel: () => void }) {
+function CreateCustomerForm({ onSubmit, onCancel }: { onSubmit: (payload: { name: string; address: string; phone: string; crops: string[]; rai: number; referralCode: string }) => void; onCancel: () => void }) {
+  const [step, setStep] = useState(1)
   const [name, setName] = useState('')
   const [address, setAddress] = useState('')
   const [phone, setPhone] = useState('')
   const [crops, setCrops] = useState<string[]>([])
   const [rai, setRai] = useState<string>('')
+  const [referralCode, setReferralCode] = useState('')
   const [error, setError] = useState<string>('')
 
   const toggleCrop = (c: string) => {
     setCrops((prev) => (prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]))
   }
 
+  const validateStep1 = () => {
+    setError('')
+    const digits = toArabicDigits(phone).replace(/\D/g, '')
+    if (!name.trim()) return setError('กรุณากรอก ชื่อ-สกุล')
+    if (digits.length < 9) return setError('กรุณากรอก เบอร์โทรศัพท์ ให้ถูกต้อง')
+    return true
+  }
+
+  const validateStep2 = () => {
+    setError('')
+    const arabic = toArabicDigits(rai)
+    // Regex to ensure it's a valid positive number (integer or decimal)
+    // This rejects "abc" (which might parse to 0) or empty strings
+    if (!/^\d+(\.\d+)?$/.test(arabic)) {
+      return setError('กรุณากรอก จำนวนไร่ ให้ถูกต้อง (ตัวเลขเท่านั้น)')
+    }
+    const raiNum = parseFloat(arabic)
+    if (isNaN(raiNum) || raiNum < 0) return setError('กรุณากรอก จำนวนไร่ ให้ถูกต้อง')
+    return true
+  }
+
+  const handleNext = () => {
+    if (step === 1 && validateStep1()) {
+      setStep(2)
+      setError('')
+    } else if (step === 2 && validateStep2()) {
+      setStep(3)
+      setError('')
+    }
+  }
+
+  const handleBack = () => {
+    setError('')
+    if (step > 1) setStep(step - 1)
+  }
+
   const handleSubmit = () => {
     setError('')
     const digits = toArabicDigits(phone).replace(/\D/g, '')
-    const raiNum = Number(rai)
+    const raiNum = toNumber(rai) ?? 0
+    // Final check, though validation passed earlier
     if (!name.trim()) return setError('กรุณากรอก ชื่อ-สกุล')
-    if (digits.length < 9) return setError('กรุณากรอก เบอร์โทรศัพท์ ให้ถูกต้อง')
-    if (!rai || isNaN(raiNum) || raiNum < 0) return setError('กรุณากรอก จำนวนไร่ ให้ถูกต้อง')
 
-    onSubmit({ name: name.trim(), address: address.trim(), phone: digits, crops, rai: raiNum })
+    onSubmit({ name: name.trim(), address: address.trim(), phone: digits, crops, rai: raiNum, referralCode: referralCode.trim() })
   }
 
   return (
@@ -192,41 +230,76 @@ function CreateCustomerForm({ onSubmit, onCancel }: { onSubmit: (payload: { name
         <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">{error}</div>
       )}
 
-      <div>
-        <label className="mb-1 block text-sm font-medium text-slate-700">ชื่อ-สกุล</label>
-        <input value={name} onChange={(e) => setName(e.target.value)} className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500" />
+      <div className="mb-4 text-sm font-medium text-slate-500">
+        Step {step} / 3
       </div>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium text-slate-700">ที่อยู่</label>
-        <textarea value={address} onChange={(e) => setAddress(e.target.value)} rows={3} className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500" />
-      </div>
+      {step === 1 && (
+        <>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700">ชื่อ-สกุล</label>
+            <input value={name} onChange={(e) => setName(e.target.value)} className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500" />
+          </div>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium text-slate-700">เบอร์โทรศัพท์</label>
-        <input value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500" />
-      </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700">ที่อยู่</label>
+            <textarea value={address} onChange={(e) => setAddress(e.target.value)} rows={3} className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500" />
+          </div>
 
-      <div>
-        <label className="mb-2 block text-sm font-medium text-slate-700">พืชที่ปลูก (เลือกได้หลายรายการ)</label>
-        <div className="flex flex-wrap gap-2">
-          {CROPS.map((c) => (
-            <Tag key={c} label={c} selected={crops.includes(c)} onToggle={() => toggleCrop(c)} />
-          ))}
-        </div>
-      </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700">เบอร์โทรศัพท์</label>
+            <input value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500" />
+          </div>
+        </>
+      )}
 
-      <div>
-        <label className="mb-1 block text-sm font-medium text-slate-700">จำนวนไร่</label>
-        <div className="flex items-center gap-2">
-          <input value={rai} onChange={(e) => setRai(e.target.value)} type="number" min={0} step={0.1} className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500" />
-          <span className="text-slate-500">ไร่</span>
-        </div>
-      </div>
+      {step === 2 && (
+        <>
+          <div>
+            <label className="mb-2 block text-sm font-medium text-slate-700">พืชที่ปลูก (เลือกได้หลายรายการ)</label>
+            <div className="flex flex-wrap gap-2">
+              {CROPS.map((c) => (
+                <Tag key={c} label={c} selected={crops.includes(c)} onToggle={() => toggleCrop(c)} />
+              ))}
+            </div>
+          </div>
 
-      <div className="flex justify-end gap-3 pt-2">
-        <button onClick={onCancel} className="rounded-lg bg-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-300">ยกเลิก</button>
-        <button onClick={handleSubmit} className="rounded-lg bg-purple-600 px-4 py-2 font-medium text-white hover:bg-purple-700">บันทึก</button>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700">จำนวนไร่</label>
+            <div className="flex items-center gap-2">
+              <input value={rai} onChange={(e) => setRai(e.target.value)} inputMode="decimal" className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500" />
+              <span className="text-slate-500">ไร่</span>
+            </div>
+          </div>
+        </>
+      )}
+
+      {step === 3 && (
+        <>
+          <div>
+            <label className="mb-1 block text-lg font-bold text-slate-800">รหัสแนะนำ (ถ้ามี)</label>
+            <input
+              value={referralCode}
+              onChange={(e) => setReferralCode(e.target.value)}
+              placeholder="รหัสแนะนำ"
+              className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+          </div>
+        </>
+      )}
+
+      <div className="flex justify-between gap-3 pt-4">
+        {step === 1 ? (
+          <button type="button" onClick={onCancel} className="rounded-lg bg-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-300">ยกเลิก</button>
+        ) : (
+          <button type="button" onClick={handleBack} className="rounded-lg bg-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-300">ย้อนกลับ</button>
+        )}
+
+        {step < 3 ? (
+          <button type="button" onClick={handleNext} className="rounded-lg bg-purple-600 px-4 py-2 font-medium text-white hover:bg-purple-700">ถัดไป</button>
+        ) : (
+          <button type="button" onClick={handleSubmit} className="rounded-lg bg-purple-600 px-4 py-2 font-medium text-white hover:bg-purple-700">ส่งข้อมูล</button>
+        )}
       </div>
     </div>
   )
@@ -733,7 +806,7 @@ export default function App() {
   const pointsBarData = useMemo(() => customers.map((c) => ({ name: c.name.split(' ')[0], points: c.points })), [customers])
   const inventoryBarData = useMemo(() => rewardInventory.map((i) => ({ name: i.name, stock: i.stock })), [rewardInventory])
 
-  const createCustomer = (payload: { name: string; address: string; phone: string; crops: string[]; rai: number }) => {
+  const createCustomer = (payload: { name: string; address: string; phone: string; crops: string[]; rai: number; referralCode: string }) => {
     const next = String((customers.map((c) => Number(c.id)).filter((n) => !isNaN(n)).sort((a, b) => b - a)[0] || 0) + 1)
     const newCustomer: Customer = {
       id: next,
@@ -744,6 +817,7 @@ export default function App() {
       address: payload.address,
       crops: payload.crops,
       rai: payload.rai,
+      referralCode: payload.referralCode,
     }
     setCustomers((prev) => [newCustomer, ...prev])
     setShowCreate(false)
