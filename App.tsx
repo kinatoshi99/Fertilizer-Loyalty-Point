@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 // App.tsx — Drop-in single file
 // + create-customer
@@ -6,8 +6,9 @@
 // + Buy Product form on Customer Dashboard (brand, N-P-K, prices)
 // + Save purchase => update Purchase History immediately
 
-import React, { useMemo, useState } from 'react'
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts'
+import React, { useMemo, useState } from "react";
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
+import UltraAiTodo from "./components/UltraAiTodo";
 
 // ----------------------
 // Types
@@ -844,6 +845,7 @@ export default function App() {
         {currentView === 'main' && (
           <div className="grid gap-6 md:grid-cols-2">
             {/* Customers */}
+	    <UltraAiTodo />
             <div className="rounded-2xl bg-white p-6 shadow-lg">
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
